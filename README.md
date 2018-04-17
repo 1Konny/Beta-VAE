@@ -10,6 +10,9 @@ visdom
 ```
 <br>
 
+### Datasets
+[same with here]
+
 ### Usage
 initialize visdom
 ```
@@ -33,9 +36,14 @@ localhost:55558
 <br>
 
 ### Results
-soon
+#### 3D Chairs latent space traverse. z was sampled from N(0,I)
+![3dchairs](misc/beta_vae_3dchairs_iter_1000000.jpg)
+#### CelebA latent space traverse. z was sampled from N(0,I)
+![celeba](misc/beta_vae_celeba_iter_1000000.jpg)
+
 
 ### Reference
 1. β-VAE: LEARNING BASIC VISUAL CONCEPTS WITH A CONSTRAINED VARIATIONAL FRAMEWORK
 
 [this paper]: https://openreview.net/pdf?id=Sy2fzU9gl
+[same with here]: https://github.com/1Konny/FactorVAE
