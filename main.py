@@ -26,18 +26,18 @@ def main(args):
     if args.train:
         net.train()
     else:
-        net.show_factorization()
+        net.traverse()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='toy Beta-VAE')
 
-    parser.add_argument('--train', default=True, type=str2bool, help='train or show_factorization')
+    parser.add_argument('--train', default=True, type=str2bool, help='train or traverse')
     parser.add_argument('--cuda', default=True, type=str2bool, help='enable cuda')
     parser.add_argument('--max_iter', default=1e6, type=int, help='maximum training iteration')
     parser.add_argument('--batch_size', default=64, type=int, help='batch size')
 
-    parser.add_argument('--z_dim', default=10, type=int, help='dimension of the representation z')
+    parser.add_argument('--z_dim', default=32, type=int, help='dimension of the representation z')
     parser.add_argument('--beta', default=6.4, type=float, help='beta parameter for KL-term')
     parser.add_argument('--lr', default=1e-4, type=float, help='learning rate')
     parser.add_argument('--beta1', default=0.5, type=float, help='Adam optimizer beta1')
