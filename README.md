@@ -43,7 +43,7 @@ localhost:55558
 
 
 ### Reference
-1. β-VAE: LEARNING BASIC VISUAL CONCEPTS WITH A CONSTRAINED VARIATIONAL FRAMEWORK
+1. β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al.
 
 [this paper]: https://openreview.net/pdf?id=Sy2fzU9gl
 [same with here]: https://github.com/1Konny/FactorVAE
