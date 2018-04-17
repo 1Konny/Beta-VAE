@@ -107,6 +107,9 @@ class Solver(object):
                         self.global_iter, recon_loss.data[0], self.beta*kld.data[0]))
                     curve_data = []
 
+                if self.global_iter%100000 == 0:
+                    self.traverse()
+
                 if self.global_iter >= self.max_iter:
                     out = True
                     break
