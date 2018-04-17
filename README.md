@@ -12,6 +12,7 @@ visdom
 
 ### Datasets
 [same with here]
+<br>
 
 ### Usage
 initialize visdom
