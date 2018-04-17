@@ -197,7 +197,7 @@ class Solver(object):
                     sample = F.sigmoid(decoder(z))
                     samples.append(sample)
             samples = torch.cat(samples, dim=0).data.cpu()
-            title = '{}_row_traverse(iter:{})'.format(key, row, self.global_iter)
+            title = '{}_row_traverse(iter:{})'.format(key, self.global_iter)
             viz.images(samples, opts=dict(title=title), nrow=len(interpolation))
 
     def net_mode(self, train):
