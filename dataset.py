@@ -32,13 +32,9 @@ def return_data(args):
     image_size = args.image_size
     assert image_size == 64, 'currently only image size of 64 is supported'
 
-    if name.lower() == '3dchairs':
-        transform = transforms.Compose([
-            transforms.ToTensor(),])
-    else:
-        transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
-            transforms.ToTensor(),])
+    transform = transforms.Compose([
+        transforms.Resize((image_size, image_size)),
+        transforms.ToTensor(),])
 
     if name.lower() == 'celeba':
         root = Path(dset_dir).joinpath('CelebA')
