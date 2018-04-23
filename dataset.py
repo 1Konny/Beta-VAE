@@ -1,8 +1,10 @@
 """dataset.py"""
 
 from pathlib import Path
+import numpy as np
 
-from torch.utils.data import DataLoader
+import torch
+from torch.utils.data import Dataset, DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
 
@@ -24,6 +26,17 @@ class CustomImageFolder(ImageFolder):
         return img
 
 
+class CustomTensorDataset(Dataset):
+    def __init__(self, data_tensor):
+        self.data_tensor = data_tensor
+
+    def __getitem__(self, index):
+        return self.data_tensor[index]
+
+    def __len__(self):
+        return self.data_tensor.size(0)
+
+
 def return_data(args):
     name = args.dataset
     dset_dir = args.dset_dir
@@ -32,18 +45,30 @@ def return_data(args):
     image_size = args.image_size
     assert image_size == 64, 'currently only image size of 64 is supported'
 
-    transform = transforms.Compose([
-        transforms.Resize((image_size, image_size)),
-        transforms.ToTensor(),])
-
-    if name.lower() == 'celeba':
-        root = Path(dset_dir).joinpath('CelebA')
-        train_kwargs = {'root':root, 'transform':transform}
-        dset = CustomImageFolder
-    elif name.lower() == '3dchairs':
+    if name.lower() == '3dchairs':
         root = Path(dset_dir).joinpath('3DChairs')
+        transform = transforms.Compose([
+            transforms.Resize((image_size, image_size)),
+            transforms.ToTensor(),])
         train_kwargs = {'root':root, 'transform':transform}
         dset = CustomImageFolder
+
+    elif name.lower() == 'celeba':
+        root = Path(dset_dir).joinpath('CelebA')
+        transform = transforms.Compose([
+            transforms.Resize((image_size, image_size)),
+            transforms.ToTensor(),])
+        train_kwargs = {'root':root, 'transform':transform}
+        dset = CustomImageFolder
+
+    elif name.lower() == 'dsprites':
+        root = Path(dset_dir).joinpath('dsprites-dataset')
+        data = np.load(root.joinpath('dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'),
+                       encoding='bytes')
+        data = torch.from_numpy(data['imgs']).unsqueeze(1).float()
+        train_kwargs = {'data_tensor':data}
+        dset = CustomTensorDataset
+
     else:
         raise NotImplementedError
 

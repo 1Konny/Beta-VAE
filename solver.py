@@ -11,7 +11,7 @@ from torch.autograd import Variable
 from torchvision.utils import make_grid
 
 from utils import cuda
-from model import BetaVAE
+from model import BetaVAE_2D, BetaVAE_3D
 from dataset import return_data
 
 
@@ -48,7 +48,16 @@ class Solver(object):
         self.beta1 = args.beta1
         self.beta2 = args.beta2
 
-        self.net = cuda(BetaVAE(self.z_dim), self.use_cuda)
+        if args.dataset.lower() == 'dsprites':
+            net = BetaVAE_2D
+        elif args.dataset.lower() == '3dchairs':
+            net = BetaVAE_3D
+        elif args.dataset.lower() == 'celeba':
+            net = BetaVAE_3D
+        else:
+            raise NotImplementedError
+
+        self.net = cuda(net(self.z_dim), self.use_cuda)
         self.optim = optim.Adam(self.net.parameters(), lr=self.lr,
                                     betas=(self.beta1, self.beta2))
 

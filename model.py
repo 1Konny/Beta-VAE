@@ -7,9 +7,9 @@ import torch.nn.init as init
 from torch.autograd import Variable
 
 
-class BetaVAE(nn.Module):
+class BetaVAE_3D(nn.Module):
     def __init__(self, z_dim=10):
-        super(BetaVAE, self).__init__()
+        super(BetaVAE_3D, self).__init__()
         self.z_dim = z_dim
         self.encode = nn.Sequential(
             nn.Conv2d(3, 32, 4, 2, 1),
@@ -56,6 +56,53 @@ class BetaVAE(nn.Module):
         x_recon = self.decode(z)
 
         return x_recon, mu.squeeze(), logvar.squeeze()
+
+
+class View(nn.Module):
+    def __init__(self, size):
+        super(View, self).__init__()
+        self.size = size
+
+    def forward(self, tensor):
+        return tensor.view(self.size)
+
+
+class BetaVAE_2D(BetaVAE_3D):
+    def __init__(self, z_dim=10):
+        super(BetaVAE_2D, self).__init__()
+        self.z_dim = z_dim
+
+        # Views are applied just for the consistency in shape with CONV-based models
+        self.encode = nn.Sequential(
+            View((-1, 4096)),
+            nn.Linear(4096, 1200),
+            nn.ReLU(True),
+            nn.Linear(1200, 1200),
+            nn.ReLU(True),
+            nn.Linear(1200, 2*self.z_dim),
+            View((-1, 2*self.z_dim, 1, 1)),
+        )
+        self.decode = nn.Sequential(
+            View((-1, self.z_dim)),
+            nn.Linear(self.z_dim, 1200),
+            nn.Tanh(),
+            nn.Linear(1200, 1200),
+            nn.Tanh(),
+            nn.Linear(1200, 1200),
+            nn.Tanh(),
+            nn.Linear(1200, 4096),
+            View((-1, 1, 64, 64)),
+        )
+        self.weight_init()
+
+    def forward(self, x):
+        stats = self.encode(x)
+        mu = stats[:, :self.z_dim]
+        logvar = stats[:, self.z_dim:]
+        z = self.reparametrize(mu, logvar)
+        x_recon = self.decode(z).view(x.size())
+
+        return x_recon, mu, logvar
 
 
 def kaiming_init(m):
