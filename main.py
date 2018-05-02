@@ -37,8 +37,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_iter', default=1e6, type=float, help='maximum training iteration')
     parser.add_argument('--batch_size', default=64, type=int, help='batch size')
 
-    parser.add_argument('--z_dim', default=32, type=int, help='dimension of the representation z')
-    parser.add_argument('--beta', default=6.4, type=float, help='beta parameter for KL-term')
+    parser.add_argument('--z_dim', default=10, type=int, help='dimension of the representation z')
+    parser.add_argument('--beta', default=4, type=float, help='beta parameter for KL-term')
     parser.add_argument('--lr', default=1e-4, type=float, help='learning rate')
     parser.add_argument('--beta1', default=0.5, type=float, help='Adam optimizer beta1')
     parser.add_argument('--beta2', default=0.9, type=float, help='Adam optimizer beta2')
