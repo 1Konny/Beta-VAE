@@ -62,9 +62,13 @@ def return_data(args):
         dset = CustomImageFolder
 
     elif name.lower() == 'dsprites':
-        root = Path(dset_dir).joinpath('dsprites-dataset')
-        data = np.load(root.joinpath('dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'),
-                       encoding='bytes')
+        root = Path(dset_dir).joinpath('dsprites-dataset/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz')
+        if not root.exists():
+            import subprocess
+            print('Now download dsprites-dataset')
+            subprocess.call(['./download_dsprites.sh'])
+            print('Finished')
+        data = np.load(root, encoding='bytes')
         data = torch.from_numpy(data['imgs']).unsqueeze(1).float()
         train_kwargs = {'data_tensor':data}
         dset = CustomTensorDataset
