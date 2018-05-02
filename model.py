@@ -21,6 +21,7 @@ class BetaVAE_3D(nn.Module):
             nn.Conv2d(64, 64, 4, 2, 1),
             nn.ReLU(True),
             nn.Conv2d(64, 256, 4, 1),
+            nn.ReLU(True),
             nn.Conv2d(256, 2*self.z_dim, 1)
         )
         self.decode = nn.Sequential(
