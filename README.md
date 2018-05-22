@@ -53,8 +53,9 @@ sh run_3dchairs_H.sh
 ### Reference
 1. β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al., ICLR, 2017
 2. Understanding disentangling in β-VAE, Burgess et al., arxiv:1804.03599, 2018
-3. [Github Repo]: Tensorflow implementation
+3. [Github Repo]: Tensorflow implementation from [miyosuda]
 
 [this paper]: https://openreview.net/pdf?id=Sy2fzU9gl
 [same with here]: https://github.com/1Konny/FactorVAE
 [Github Repo]: https://github.com/miyosuda/disentangled_vae
+[miyosuda]: https://github.com/miyosuda
