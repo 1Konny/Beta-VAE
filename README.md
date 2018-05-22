@@ -55,7 +55,9 @@ sh run_3dchairs_H.sh
 sh run_dsprites_B.sh
 ```
 ![dsprites_plot](misc/dsprites_plot.png)
+<p align="center">
 ![dsprites_traverse](misc/dsprites_traverse.gif)
+</p>
 
 
 ### Reference
