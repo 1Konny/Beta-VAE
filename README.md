@@ -21,17 +21,19 @@ initialize visdom
 ```
 python -m visdom.server
 ```
-you can run codes using sh files
+you can reproduce results below by
 ```
-e.g.
 sh run_celeba_H.sh
 sh run_3dchairs_H.sh
 sh run_dsprites_B.sh
 ```
-or you can run your own experiments by setting parameters manually
+or you can run your own experiments by setting parameters manually.
+for objective and model arguments, you have two options H and B indicating methods proposed in Higgins et al. and Burgess et al., respectively
+arguments ```--C_max``` and ```--C_stop_iter``` should be set when ```--objective B```. for further details, please refer to Burgess et al.
 ```
 e.g.
-python main.py --beta 4 --lr 1e-4 --z_dim 32 ...
+python main.py --dataset 3DChairs --beta 4 --lr 1e-4 --z_dim 10 --objective H --model H --max_iter 1e6 ...
+python main.py --dataset dsprites --gamma 1000 --C_max 25 --C_stop_iter 1e5 --lr 5e-4 --z_dim 10 --objective B --model B --max_iter 1e6 ...
 ```
 check training process on the visdom server
 ```
