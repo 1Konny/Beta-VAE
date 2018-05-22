@@ -7,56 +7,10 @@ import torch.nn.init as init
 from torch.autograd import Variable
 
 
-class BetaVAE_3D(nn.Module):
-    def __init__(self, z_dim=10):
-        super(BetaVAE_3D, self).__init__()
-        self.z_dim = z_dim
-        self.encode = nn.Sequential(
-            nn.Conv2d(3, 32, 4, 2, 1),
-            nn.ReLU(True),
-            nn.Conv2d(32, 32, 4, 2, 1),
-            nn.ReLU(True),
-            nn.Conv2d(32, 64, 4, 2, 1),
-            nn.ReLU(True),
-            nn.Conv2d(64, 64, 4, 2, 1),
-            nn.ReLU(True),
-            nn.Conv2d(64, 256, 4, 1),
-            nn.ReLU(True),
-            nn.Conv2d(256, 2*self.z_dim, 1)
-        )
-        self.decode = nn.Sequential(
-            nn.Conv2d(self.z_dim, 256, 1),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(256, 64, 4),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(64, 64, 4, 2, 1),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(64, 32, 4, 2, 1),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(32, 32, 4, 2, 1),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(32, 3, 4, 2, 1),
-        )
-        self.weight_init()
-
-    def weight_init(self):
-        for block in self._modules:
-            for m in self._modules[block]:
-                kaiming_init(m)
-
-    def reparametrize(self, mu, logvar):
-        std = logvar.mul(0.5).exp_()
-        eps = Variable(std.data.new(std.size()).normal_())
-        return eps.mul(std).add_(mu)
-
-    def forward(self, x):
-        stats = self.encode(x)
-        mu = stats[:, :self.z_dim]
-        logvar = stats[:, self.z_dim:]
-        z = self.reparametrize(mu, logvar)
-        x_recon = self.decode(z)
-
-        return x_recon, mu.squeeze(), logvar.squeeze()
+def reparametrize(mu, logvar):
+    std = logvar.div(2).exp()
+    eps = Variable(std.data.new(std.size()).normal_())
+    return mu + std*eps
 
 
 class View(nn.Module):
@@ -68,42 +22,125 @@ class View(nn.Module):
         return tensor.view(self.size)
 
 
-class BetaVAE_2D(BetaVAE_3D):
-    def __init__(self, z_dim=10):
-        super(BetaVAE_2D, self).__init__()
+class BetaVAE_H(nn.Module):
+    """Model proposed in original beta-VAE paper(Higgins et al, ICLR, 2017)."""
+
+    def __init__(self, z_dim=10, nc=3):
+        super(BetaVAE_H, self).__init__()
+        self.z_dim = z_dim
+        self.nc = nc
+        self.encoder = nn.Sequential(
+            nn.Conv2d(nc, 32, 4, 2, 1),          # B,  32, 32, 32
+            nn.ReLU(True),
+            nn.Conv2d(32, 32, 4, 2, 1),          # B,  32, 16, 16
+            nn.ReLU(True),
+            nn.Conv2d(32, 64, 4, 2, 1),          # B,  64,  8,  8
+            nn.ReLU(True),
+            nn.Conv2d(64, 64, 4, 2, 1),          # B,  64,  4,  4
+            nn.ReLU(True),
+            nn.Conv2d(64, 256, 4, 1),            # B, 256,  1,  1
+            nn.ReLU(True),
+            View((-1, 256*1*1)),                 # B, 256
+            nn.Linear(256, z_dim*2),             # B, z_dim*2
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(z_dim, 256),               # B, 256
+            View((-1, 256, 1, 1)),               # B, 256,  1,  1
+            nn.ReLU(True),
+            nn.ConvTranspose2d(256, 64, 4),      # B,  64,  4,  4
+            nn.ReLU(True),
+            nn.ConvTranspose2d(64, 64, 4, 2, 1), # B,  64,  8,  8
+            nn.ReLU(True),
+            nn.ConvTranspose2d(64, 32, 4, 2, 1), # B,  32, 16, 16
+            nn.ReLU(True),
+            nn.ConvTranspose2d(32, 32, 4, 2, 1), # B,  32, 32, 32
+            nn.ReLU(True),
+            nn.ConvTranspose2d(32, nc, 4, 2, 1),  # B, nc, 64, 64
+        )
+
+    def weight_init(self):
+        for block in self._modules:
+            for m in self._modules[block]:
+                kaiming_init(m)
+
+    def forward(self, x):
+        distributions = self._encode(x)
+        mu = distributions[:, :self.z_dim]
+        logvar = distributions[:, self.z_dim:]
+        z = reparametrize(mu, logvar)
+        x_recon = self._decode(z)
+
+        return x_recon, mu, logvar
+
+    def _encode(self, x):
+        return self.encoder(x)
+
+    def _decode(self, z):
+        return self.decoder(z)
+
+
+class BetaVAE_B(BetaVAE_H):
+    """Model proposed in understanding beta-VAE paper(Burgess et al, arxiv:1804.03599, 2018)."""
+
+    def __init__(self, z_dim=10, nc=1):
+        super(BetaVAE_B, self).__init__()
+        self.nc = nc
         self.z_dim = z_dim
 
-        # Views are applied just for the consistency in shape with CONV-based models
-        self.encode = nn.Sequential(
-            View((-1, 4096)),
-            nn.Linear(4096, 1200),
+        self.encoder = nn.Sequential(
+            nn.Conv2d(nc, 32, 4, 2, 1),          # B,  32, 32, 32
             nn.ReLU(True),
-            nn.Linear(1200, 1200),
+            nn.Conv2d(32, 32, 4, 2, 1),          # B,  32, 16, 16
             nn.ReLU(True),
-            nn.Linear(1200, 2*self.z_dim),
-            View((-1, 2*self.z_dim, 1, 1)),
+            nn.Conv2d(32, 32, 4, 2, 1),          # B,  32,  8,  8
+            nn.ReLU(True),
+            nn.Conv2d(32, 32, 4, 2, 1),          # B,  32,  4,  4
+            nn.ReLU(True),
+            View((-1, 32*4*4)),                  # B, 512
+            nn.Linear(32*4*4, 256),              # B, 256
+            nn.ReLU(True),
+            nn.Linear(256, 256),                 # B, 256
+            nn.ReLU(True),
+            nn.Linear(256, z_dim*2),             # B, z_dim*2
         )
-        self.decode = nn.Sequential(
-            View((-1, self.z_dim)),
-            nn.Linear(self.z_dim, 1200),
-            nn.Tanh(),
-            nn.Linear(1200, 1200),
-            nn.Tanh(),
-            nn.Linear(1200, 1200),
-            nn.Tanh(),
-            nn.Linear(1200, 4096),
-            View((-1, 1, 64, 64)),
+
+        self.decoder = nn.Sequential(
+            nn.Linear(z_dim, 256),               # B, 256
+            nn.ReLU(True),
+            nn.Linear(256, 256),                 # B, 256
+            nn.ReLU(True),
+            nn.Linear(256, 32*4*4),              # B, 512
+            nn.ReLU(True),
+            View((-1, 32, 4, 4)),                # B,  32,  4,  4
+            nn.ConvTranspose2d(32, 32, 4, 2, 1), # B,  32,  8,  8
+            nn.ReLU(True),
+            nn.ConvTranspose2d(32, 32, 4, 2, 1), # B,  32, 16, 16
+            nn.ReLU(True),
+            nn.ConvTranspose2d(32, 32, 4, 2, 1), # B,  32, 32, 32
+            nn.ReLU(True),
+            nn.ConvTranspose2d(32, nc, 4, 2, 1), # B,  nc, 64, 64
         )
         self.weight_init()
 
+    def weight_init(self):
+        for block in self._modules:
+            for m in self._modules[block]:
+                kaiming_init(m)
+
     def forward(self, x):
-        stats = self.encode(x)
-        mu = stats[:, :self.z_dim]
-        logvar = stats[:, self.z_dim:]
-        z = self.reparametrize(mu, logvar)
-        x_recon = self.decode(z).view(x.size())
+        distributions = self._encode(x)
+        mu = distributions[:, :self.z_dim]
+        logvar = distributions[:, self.z_dim:]
+        z = reparametrize(mu, logvar)
+        x_recon = self._decode(z).view(x.size())
 
         return x_recon, mu, logvar
+
+    def _encode(self, x):
+        return self.encoder(x)
+
+    def _decode(self, z):
+        return self.decoder(z)
 
 
 def kaiming_init(m):
@@ -117,8 +154,16 @@ def kaiming_init(m):
             m.bias.data.fill_(0)
 
 
+def normal_init(m, mean, std):
+    if isinstance(m, (nn.Linear, nn.Conv2d)):
+        m.weight.data.normal_(mean, std)
+        if m.bias.data is not None:
+            m.bias.data.zero_()
+    elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm1d)):
+        m.weight.data.fill_(1)
+        if m.bias.data is not None:
+            m.bias.data.zero_()
+
+
 if __name__ == '__main__':
-    import ipdb; ipdb.set_trace()
-    net = BetaVAE(32)
-    x = Variable(torch.rand(1, 3, 64, 64))
-    net(x)
+    pass
