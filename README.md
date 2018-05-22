@@ -58,7 +58,10 @@ sh run_dsprites_B.sh
 ```
 ![dsprites_plot](misc/dsprites_plot.png)
 <p align="center">
-<img src=misc/dsprites_traverse.gif>
+<img src=misc/dsprites_traverse_ellipse.gif>
+<img src=misc/dsprites_traverse_heart.gif>
+<img src=misc/dsprites_traverse_random.gif>
+<img src=misc/dsprites_reconstruction.jpg>
 </p>
 
 
