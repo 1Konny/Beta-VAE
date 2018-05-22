@@ -56,11 +56,16 @@ sh run_3dchairs_H.sh
 ```
 sh run_dsprites_B.sh
 ```
+##### visdom line plot
 ![dsprites_plot](misc/dsprites_plot.png)
+##### latent traversal gif(```--save_output True```)
 <p align="center">
 <img src=misc/dsprites_traverse_ellipse.gif>
 <img src=misc/dsprites_traverse_heart.gif>
 <img src=misc/dsprites_traverse_random.gif>
+</p>
+##### reconstruction(left: true, right: reconstruction)
+<p align="center">
 <img src=misc/dsprites_reconstruction.jpg>
 </p>
 
