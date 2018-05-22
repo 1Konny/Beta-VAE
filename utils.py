@@ -1,10 +1,12 @@
 """utils.py"""
 
 import argparse
+import subprocess
 
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+
 
 def cuda(tensor, uses_cuda):
     return tensor.cuda() if uses_cuda else tensor
@@ -31,17 +33,11 @@ def where(cond, x, y):
     return (cond*x) + ((1-cond)*y)
 
 
-class One_Hot(nn.Module):
-    # got it from :
-    # https://lirnli.wordpress.com/2017/09/03/one-hot-encoding-in-pytorch/
-    def __init__(self, depth):
-        super(One_Hot, self).__init__()
-        self.depth = depth
-        self.ones = torch.sparse.torch.eye(depth)
+def grid2gif(image_str, output_gif, delay=100):
+    """Make GIF from images.
 
-    def forward(self, X_in):
-        X_in = X_in.long()
-        return Variable(self.ones.index_select(0, X_in.data))
-
-    def __repr__(self):
-        return self.__class__.__name__ + "({})".format(self.depth)
+    code from:
+        https://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python/34555939#34555939
+    """
+    str1 = 'convert -delay '+str(delay)+' -loop 0 ' + image_str  + ' ' + output_gif
+    subprocess.call(str1, shell=True)

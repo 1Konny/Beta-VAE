@@ -54,9 +54,11 @@ if __name__ == "__main__":
     parser.add_argument('--viz_on', default=True, type=str2bool, help='enable visdom visualization')
     parser.add_argument('--viz_name', default='main', type=str, help='visdom env name')
     parser.add_argument('--viz_port', default=8097, type=str, help='visdom port number')
+    parser.add_argument('--save_output', default=True, type=str2bool, help='save traverse images and gif')
+    parser.add_argument('--output_dir', default='outputs', type=str, help='output directory')
 
     parser.add_argument('--ckpt_dir', default='checkpoints', type=str, help='checkpoint directory')
-    parser.add_argument('--ckpt_name', default=None, type=str, help='load previous checkpoint. insert checkpoint filename')
+    parser.add_argument('--ckpt_name', default='last', type=str, help='load previous checkpoint. insert checkpoint filename')
 
     args = parser.parse_args()
 
