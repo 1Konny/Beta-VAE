@@ -27,8 +27,8 @@ sh run_celeba_H.sh
 sh run_3dchairs_H.sh
 sh run_dsprites_B.sh
 ```
-or you can run your own experiments by setting parameters manually.
-for objective and model arguments, you have two options H and B indicating methods proposed in Higgins et al. and Burgess et al., respectively
+or you can run your own experiments by setting parameters manually.<br>
+for objective and model arguments, you have two options H and B indicating methods proposed in Higgins et al. and Burgess et al., respectively.<br>
 arguments ```--C_max``` and ```--C_stop_iter``` should be set when ```--objective B```. for further details, please refer to Burgess et al.
 ```
 e.g.
