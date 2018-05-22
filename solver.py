@@ -217,13 +217,13 @@ class Solver(object):
         mean_klds = torch.stack(self.gather.data['mean_kld'])
         total_klds = torch.stack(self.gather.data['total_kld'])
         klds = torch.cat([dim_wise_klds, mean_klds, total_klds], 1).cpu()
+        iters = torch.Tensor(self.gather.data['iter'])
+
         legend = []
         for z_j in range(self.z_dim):
             legend.append('z_{}'.format(z_j))
         legend.append('mean')
         legend.append('total')
-
-        iters = torch.Tensor(self.gather.data['iter'])
 
         if self.win_recon is None:
             self.win_recon = self.viz.line(

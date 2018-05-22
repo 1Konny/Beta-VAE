@@ -38,16 +38,21 @@ localhost:8097
 <br>
 
 ### Results
-#### 3D Chairs latent space traverse. z was sampled from N(0,I)
+#### 3D Chairs
 ```
 sh run_celeba_H.sh
 ```
 ![3dchairs](misc/beta_vae_3dchairs_iter_1000000.jpg)
-#### CelebA latent space traverse. z was sampled from N(0,I)
+#### CelebA
 ```
 sh run_3dchairs_H.sh
 ```
 ![celeba](misc/beta_vae_celeba_iter_1000000.jpg)
+#### dSprites
+```
+sh run_dsprites_B.sh
+```
+![dsprites](misc/dsprites_plot.png)
 
 
 ### Reference
