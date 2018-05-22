@@ -63,7 +63,7 @@ sh run_dsprites_B.sh
 <img src=misc/dsprites_traverse_ellipse.gif>
 <img src=misc/dsprites_traverse_heart.gif>
 <img src=misc/dsprites_traverse_random.gif>
-</p>
+</p><br>
 ##### reconstruction(left: true, right: reconstruction)
 <p align="center">
 <img src=misc/dsprites_reconstruction.jpg>
