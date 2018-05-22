@@ -1,5 +1,7 @@
 # β-VAE
-Pytorch implementation of β-VAE proposed in [this paper]
+Pytorch reproduction of two papers below:
+1. [β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al., ICLR, 2017]
+2. [Understanding disentangling in β-VAE, Burgess et al., arxiv:1804.03599, 2018]
 <br>
 
 ### Dependencies
@@ -56,11 +58,12 @@ sh run_dsprites_B.sh
 
 
 ### Reference
-1. β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al., ICLR, 2017
-2. Understanding disentangling in β-VAE, Burgess et al., arxiv:1804.03599, 2018
+1. [β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al., ICLR, 2017]
+2. [Understanding disentangling in β-VAE, Burgess et al., arxiv:1804.03599, 2018]
 3. [Github Repo]: Tensorflow implementation from [miyosuda]
 
-[this paper]: https://openreview.net/pdf?id=Sy2fzU9gl
+[β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al., ICLR, 2017]: https://openreview.net/pdf?id=Sy2fzU9gl
+[Understanding disentangling in β-VAE, Burgess et al., arxiv:1804.03599, 2018]: http://arxiv.org/abs/1804.03599
 [same with here]: https://github.com/1Konny/FactorVAE
 [Github Repo]: https://github.com/miyosuda/disentangled_vae
 [miyosuda]: https://github.com/miyosuda
