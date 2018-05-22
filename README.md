@@ -17,13 +17,14 @@ visdom
 ### Usage
 initialize visdom
 ```
-python -m visdom.server -p 55558
+python -m visdom.server
 ```
 you can run codes using sh files
 ```
 e.g.
-sh run_celeba.sh
-sh run_3dchairs.sh
+sh run_celeba_H.sh
+sh run_3dchairs_H.sh
+sh run_dsprites_B.sh
 ```
 or you can run your own experiments by setting parameters manually
 ```
@@ -32,19 +33,28 @@ python main.py --beta 4 --lr 1e-4 --z_dim 32 ...
 ```
 check training process on the visdom server
 ```
-localhost:55558
+localhost:8097
 ```
 <br>
 
 ### Results
 #### 3D Chairs latent space traverse. z was sampled from N(0,I)
+```
+sh run_celeba_H.sh
+```
 ![3dchairs](misc/beta_vae_3dchairs_iter_1000000.jpg)
 #### CelebA latent space traverse. z was sampled from N(0,I)
+```
+sh run_3dchairs_H.sh
+```
 ![celeba](misc/beta_vae_celeba_iter_1000000.jpg)
 
 
 ### Reference
-1. β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al.
+1. β-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework, Higgins et al., ICLR, 2017
+2. Understanding disentangling in β-VAE, Burgess et al., arxiv:1804.03599, 2018
+3. [Github Repo]: Tensorflow implementation
 
 [this paper]: https://openreview.net/pdf?id=Sy2fzU9gl
 [same with here]: https://github.com/1Konny/FactorVAE
+[Github Repo]: https://github.com/miyosuda/disentangled_vae
