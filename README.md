@@ -48,11 +48,11 @@ localhost:8097
 ```
 sh run_3dchairs_H_beta4_z10.sh
 ```
-![3dchairs_beta4_z16](misc/3dchairs_H_beta4_z10_traverse.jpg)
+![3dchairs_beta4_z16](misc/3dchairs_H_beta4_z10_traverse.png)
 ```
 sh run_3dchairs_H_beta4_z16.sh
 ```
-![3dchairs_beta4_z16](misc/3dchairs_H_beta4_z16_traverse.jpg)
+![3dchairs_beta4_z16](misc/3dchairs_H_beta4_z16_traverse.png)
 #### CelebA
 ```
 sh run_celeba_H_beta10_z10.sh
