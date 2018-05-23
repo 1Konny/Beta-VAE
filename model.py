@@ -58,6 +58,8 @@ class BetaVAE_H(nn.Module):
             nn.ConvTranspose2d(32, nc, 4, 2, 1),  # B, nc, 64, 64
         )
 
+        self.weight_init()
+
     def weight_init(self):
         for block in self._modules:
             for m in self._modules[block]:
