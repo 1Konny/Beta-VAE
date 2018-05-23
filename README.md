@@ -23,9 +23,11 @@ python -m visdom.server
 ```
 you can reproduce results below by
 ```
-sh run_celeba_H.sh
-sh run_3dchairs_H.sh
-sh run_dsprites_B.sh
+sh run_celeba_H_beta10_z10.sh
+sh run_celeba_H_beta10_z32.sh
+sh run_3dchairs_H_beta4_z10.sh
+sh run_3dchairs_H_beta4_z16.sh
+sh run_dsprites_B_gamma100_z10.sh
 ```
 or you can run your own experiments by setting parameters manually.<br>
 for objective and model arguments, you have two options H and B indicating methods proposed in Higgins et al. and Burgess et al., respectively.<br>
@@ -44,14 +46,22 @@ localhost:8097
 ### Results
 #### 3D Chairs
 ```
-sh run_celeba_H.sh
+sh run_3dchairs_H_beta4_z10.sh
 ```
-![3dchairs](misc/beta_vae_3dchairs_iter_1000000.jpg)
+![3dchairs_beta4_z16](misc/3dchairs_H_beta4_z10_traverse.jpg)
+```
+sh run_3dchairs_H_beta4_z16.sh
+```
+![3dchairs_beta4_z16](misc/3dchairs_H_beta4_z16_traverse.jpg)
 #### CelebA
 ```
-sh run_3dchairs_H.sh
+sh run_celeba_H_beta10_z10.sh
 ```
-![celeba](misc/beta_vae_celeba_iter_1000000.jpg)
+![celeba](misc/celeba_H_beta10_z10_traverse.png)
+```
+sh run_celeba_H_beta10_z32.sh
+```
+![celeba](misc/celeba_H_beta10_z32_traverse.png)
 #### dSprites
 ```
 sh run_dsprites_B.sh
