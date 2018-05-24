@@ -146,8 +146,6 @@ class Solver(object):
         pbar = tqdm(total=self.max_iter)
         pbar.update(self.global_iter)
         while not out:
-            curve_data = []
-            curves = dict(iter=[], total_kld=[], dim_wise_kld=[], mean_kld=[])
             for x in self.data_loader:
                 self.global_iter += 1
                 pbar.update(1)
