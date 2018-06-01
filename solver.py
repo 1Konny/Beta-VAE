@@ -172,7 +172,7 @@ class Solver(object):
 
                 if self.global_iter%10000 == 0:
                     self.gather.insert(images=x.data)
-                    self.gather.insert(images=x_recon.data)
+                    self.gather.insert(images=F.sigmoid(x_recon).data)
                     self.viz_reconstruction()
                     self.viz_lines()
                     self.gather.flush()
@@ -205,9 +205,9 @@ class Solver(object):
     def viz_reconstruction(self):
         self.net_mode(train=False)
         x = self.gather.data['images'][0][:100]
-        x = make_grid(x, normalize=False)
-        x_recon = F.sigmoid(self.gather.data['images'][1])[:100]
-        x_recon = make_grid(x_recon, normalize=False)
+        x = make_grid(x, normalize=True)
+        x_recon = self.gather.data['images'][1][:100]
+        x_recon = make_grid(x_recon, normalize=True)
         images = torch.stack([x, x_recon], dim=0).cpu()
         self.viz.images(images, env=self.viz_name+'_reconstruction',
                         opts=dict(title=str(self.global_iter)), nrow=10)
