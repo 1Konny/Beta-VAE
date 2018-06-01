@@ -111,12 +111,12 @@ class Solver(object):
         self.viz_name = args.viz_name
         self.viz_port = args.viz_port
         self.viz_on = args.viz_on
+        self.win_recon = None
+        self.win_kld = None
+        self.win_mu = None
+        self.win_var = None
         if self.viz_on:
-            self.viz = visdom.Visdom(env=self.viz_name+'_lines', port=self.viz_port)
-            self.win_recon = None
-            self.win_kld = None
-            self.win_mu = None
-            self.win_var = None
+            self.viz = visdom.Visdom(port=self.viz_port)
 
         self.ckpt_dir = Path(args.ckpt_dir).joinpath(args.viz_name)
         if not self.ckpt_dir.exists():
@@ -175,13 +175,6 @@ class Solver(object):
                                        dim_wise_kld=dim_wise_kld.data, mean_kld=mean_kld.data)
 
                 if self.global_iter%self.display_step == 0:
-                    if self.viz_on:
-                        self.gather.insert(images=x.data)
-                        self.gather.insert(images=F.sigmoid(x_recon).data)
-                        self.viz_reconstruction()
-                        self.viz_lines()
-                    self.gather.flush()
-
                     pbar.write('[{}] recon_loss:{:.3f} total_kld:{:.3f} mean_kld:{:.3f}'.format(
                         self.global_iter, recon_loss.data[0], total_kld.data[0], mean_kld.data[0]))
 
@@ -190,13 +183,21 @@ class Solver(object):
                     for j, var_j in enumerate(var):
                         var_str += 'var{}:{:.4f} '.format(j+1, var_j)
                     pbar.write(var_str)
-                    
+
+                    if self.objective == 'B':
+                        pbar.write('C:{:.3f}'.format(C.data[0]))
+
+                    if self.viz_on:
+                        self.gather.insert(images=x.data)
+                        self.gather.insert(images=F.sigmoid(x_recon).data)
+                        self.viz_reconstruction()
+                        self.viz_traverse()
+                        self.viz_lines()
+                        self.gather.flush()
+
                 if self.global_iter%self.save_step == 0:
                     self.save_checkpoint('last')
-                    pbar.write('Saved checkpoint')
-
-                if self.global_iter%20000 == 0:
-                    self.viz_traverse()
+                    pbar.write('Saved checkpoint(iter:{})'.format(self.global_iter))
 
                 if self.global_iter%50000 == 0:
                     self.save_checkpoint(str(self.global_iter))
@@ -427,16 +428,10 @@ class Solver(object):
     def save_checkpoint(self, filename, silent=True):
         model_states = {'net':self.net.state_dict(),}
         optim_states = {'optim':self.optim.state_dict(),}
-        if self.viz_on:
-            win_states = {'recon':self.win_recon,
-                          'kld':self.win_kld,
-                          'mu':self.win_mu,
-                          'var':self.win_var,}
-        else:
-            win_states = {'recon':None,
-                          'kld':None,
-                          'mu':None,
-                          'var':None,}
+        win_states = {'recon':self.win_recon,
+                      'kld':self.win_kld,
+                      'mu':self.win_mu,
+                      'var':self.win_var,}
         states = {'iter':self.global_iter,
                   'win_states':win_states,
                   'model_states':model_states,
