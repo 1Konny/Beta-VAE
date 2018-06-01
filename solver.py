@@ -39,9 +39,9 @@ def kl_divergence(mu, logvar):
         logvar = logvar.view(logvar.size(0), logvar.size(1))
 
     klds = -0.5*(1 + logvar - mu.pow(2) - logvar.exp())
-    total_kld = klds.sum(1).mean()
+    total_kld = klds.sum(1).mean(0, True)
     dimension_wise_kld = klds.mean(0)
-    mean_kld = klds.mean()
+    mean_kld = klds.mean(1).mean(0, True)
 
     return total_kld, dimension_wise_kld, mean_kld
 
