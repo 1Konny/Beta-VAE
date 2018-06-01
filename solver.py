@@ -191,9 +191,11 @@ class Solver(object):
                         self.gather.insert(images=x.data)
                         self.gather.insert(images=F.sigmoid(x_recon).data)
                         self.viz_reconstruction()
-                        self.viz_traverse()
                         self.viz_lines()
                         self.gather.flush()
+
+                    if self.viz_on or self.save_output:
+                        self.viz_traverse()
 
                 if self.global_iter%self.save_step == 0:
                     self.save_checkpoint('last')
@@ -397,8 +399,10 @@ class Solver(object):
                     gifs.append(sample)
             samples = torch.cat(samples, dim=0).cpu()
             title = '{}_latent_traversal(iter:{})'.format(key, self.global_iter)
-            self.viz.images(samples, env=self.viz_name+'_traverse',
-                            opts=dict(title=title), nrow=len(interpolation))
+
+            if self.viz_on:
+                self.viz.images(samples, env=self.viz_name+'_traverse',
+                                opts=dict(title=title), nrow=len(interpolation))
 
         if self.save_output:
             output_dir = self.output_dir.joinpath(str(self.global_iter))
