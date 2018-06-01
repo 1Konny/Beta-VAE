@@ -136,7 +136,6 @@ class Solver(object):
         self.data_loader = return_data(args)
 
         self.gather = DataGather()
-        import ipdb; ipdb.set_trace()
 
     def train(self):
         self.net_mode(train=True)
