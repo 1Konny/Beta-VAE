@@ -190,9 +190,6 @@ class Solver(object):
                     for j, var_j in enumerate(var):
                         var_str += 'var{}:{:.4f} '.format(j+1, var_j)
                     pbar.write(var_str)
-
-                    if self.objective == 'advanced':
-                        pbar.write('C:{:.3f}'.format(C.data[0]))
                     
                 if self.global_iter%self.save_step == 0:
                     self.save_checkpoint('last')
