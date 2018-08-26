@@ -1,6 +1,9 @@
 """solver.py"""
 
-from pathlib import Path
+import warnings
+warnings.filterwarnings("ignore")
+
+import os
 from tqdm import tqdm
 import visdom
 
@@ -118,17 +121,17 @@ class Solver(object):
         if self.viz_on:
             self.viz = visdom.Visdom(port=self.viz_port)
 
-        self.ckpt_dir = Path(args.ckpt_dir).joinpath(args.viz_name)
-        if not self.ckpt_dir.exists():
-            self.ckpt_dir.mkdir(parents=True, exist_ok=True)
+        self.ckpt_dir = os.path.join(args.ckpt_dir, args.viz_name)
+        if not os.path.exists(self.ckpt_dir):
+            os.makedirs(self.ckpt_dir, exist_ok=True)
         self.ckpt_name = args.ckpt_name
         if self.ckpt_name is not None:
             self.load_checkpoint(self.ckpt_name)
 
         self.save_output = args.save_output
-        self.output_dir = Path(args.output_dir).joinpath(args.viz_name)
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.output_dir = os.path.join(args.output_dir, args.viz_name)
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir, exist_ok=True)
 
         self.gather_step = args.gather_step
         self.display_step = args.display_step
@@ -405,18 +408,18 @@ class Solver(object):
                                 opts=dict(title=title), nrow=len(interpolation))
 
         if self.save_output:
-            output_dir = self.output_dir.joinpath(str(self.global_iter))
-            output_dir.mkdir(parents=True, exist_ok=True)
+            output_dir = os.path.join(self.output_dir, str(self.global_iter))
+            os.makedirs(output_dir, exist_ok=True)
             gifs = torch.cat(gifs)
             gifs = gifs.view(len(Z), self.z_dim, len(interpolation), self.nc, 64, 64).transpose(1, 2)
             for i, key in enumerate(Z.keys()):
                 for j, val in enumerate(interpolation):
                     save_image(tensor=gifs[i][j].cpu(),
-                               filename=output_dir.joinpath('{}_{}.jpg'.format(key, j)),
+                               filename=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
                                nrow=self.z_dim, pad_value=1)
 
-                grid2gif(str(output_dir.joinpath(key+'*.jpg')),
-                         str(output_dir.joinpath(key+'.gif')), delay=10)
+                grid2gif(os.path.join(output_dir, key+'*.jpg'),
+                         os.path.join(output_dir, key+'.gif'), delay=10)
 
         self.net_mode(train=True)
 
@@ -441,15 +444,16 @@ class Solver(object):
                   'model_states':model_states,
                   'optim_states':optim_states}
 
-        file_path = self.ckpt_dir.joinpath(filename)
-        torch.save(states, file_path.open('wb+'))
+        file_path = os.path.join(self.ckpt_dir, filename)
+        with open(file_path, mode='wb+') as f:
+            torch.save(states, f)
         if not silent:
             print("=> saved checkpoint '{}' (iter {})".format(file_path, self.global_iter))
 
     def load_checkpoint(self, filename):
-        file_path = self.ckpt_dir.joinpath(filename)
-        if file_path.is_file():
-            checkpoint = torch.load(file_path.open('rb'))
+        file_path = os.path.join(self.ckpt_dir, filename)
+        if os.path.isfile(file_path):
+            checkpoint = torch.load(file_path)
             self.global_iter = checkpoint['iter']
             self.win_recon = checkpoint['win_states']['recon']
             self.win_kld = checkpoint['win_states']['kld']

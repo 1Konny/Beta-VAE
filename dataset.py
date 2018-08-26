@@ -1,6 +1,6 @@
 """dataset.py"""
 
-from pathlib import Path
+import os
 import numpy as np
 
 import torch
@@ -46,7 +46,7 @@ def return_data(args):
     assert image_size == 64, 'currently only image size of 64 is supported'
 
     if name.lower() == '3dchairs':
-        root = Path(dset_dir).joinpath('3DChairs')
+        root = os.path.join(dset_dir, '3DChairs')
         transform = transforms.Compose([
             transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),])
@@ -54,7 +54,7 @@ def return_data(args):
         dset = CustomImageFolder
 
     elif name.lower() == 'celeba':
-        root = Path(dset_dir).joinpath('CelebA')
+        root = os.path.join(dset_dir, 'CelebA')
         transform = transforms.Compose([
             transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),])
@@ -62,8 +62,8 @@ def return_data(args):
         dset = CustomImageFolder
 
     elif name.lower() == 'dsprites':
-        root = Path(dset_dir).joinpath('dsprites-dataset/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz')
-        if not root.exists():
+        root = os.path.join(dset_dir, 'dsprites-dataset/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz')
+        if not os.path.exists(root):
             import subprocess
             print('Now download dsprites-dataset')
             subprocess.call(['./download_dsprites.sh'])
