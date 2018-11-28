@@ -358,7 +358,7 @@ class Solver(object):
         random_img = Variable(cuda(random_img, self.use_cuda), volatile=True).unsqueeze(0)
         random_img_z = encoder(random_img)[:, :self.z_dim]
 
-        random_z = Variable(cuda(torch.rand(1, self.z_dim), self.use_cuda), volatile=True)
+        random_z = Variable(cuda(torch.randn(1, self.z_dim), self.use_cuda), volatile=True)
 
         if self.dataset == 'dsprites':
             fixed_idx1 = 87040 # square
