@@ -415,7 +415,7 @@ class Solver(object):
             for i, key in enumerate(Z.keys()):
                 for j, val in enumerate(interpolation):
                     save_image(tensor=gifs[i][j].cpu(),
-                               filename=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
+                               fp=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
                                nrow=self.z_dim, pad_value=1)
 
                 grid2gif(os.path.join(output_dir, key+'*.jpg'),
